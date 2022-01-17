@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "projects": {
+    "vault": {
+      "projectType": "application",
+      "root": "apps/vault",
+      "sourceRoot": "apps/vault/src",
+      "prefix": "fec",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/vault",
+            "index": "apps/vault/src/index.html",
+            "main": "apps/vault/src/main.ts",
+            "polyfills": "apps/vault/src/polyfills.ts",
+            "tsConfig": "apps/vault/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": ["apps/vault/src/favicon.ico", "apps/vault/src/assets"],
+            "styles": ["apps/vault/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/vault/src/environments/environment.ts",
+                  "with": "apps/vault/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "vault:build:production"
+            },
+            "development": {
+              "browserTarget": "vault:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "vault:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/vault/src/**/*.ts",
+              "apps/vault/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/vault"],
+          "options": {
+            "jestConfig": "apps/vault/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "vault-e2e": {
+      "root": "apps/vault-e2e",
+      "sourceRoot": "apps/vault-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/vault-e2e/cypress.json",
+            "devServerTarget": "vault:serve:development"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "vault:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/vault-e2e/**/*.{js,ts}"]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": ["vault"]
+    }
+  }
+}
