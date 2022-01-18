@@ -91,12 +91,14 @@ export class GitCollectorService {
 
   protected entriesFormatter = async (filepath: string, entries: (WalkerEntry | null)[]) => {
     const segments = filepath.split('/');
+    const route = segments.map(segment => segment.replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, '').trim().replace(' ', '-').toLowerCase()).join('/')
     const root = segments[0]
     const filename = segments[segments.length - 1]
     const entry = entries[0]
     const mode = (await entry?.mode())?.toString(8) || 'unknown';
     return this.moduleConfig.roots.includes(root) || root === '.' ? {
       filepath,
+      route,
       filename,
       oid: await entry?.oid(),
       type: await entry?.type(),

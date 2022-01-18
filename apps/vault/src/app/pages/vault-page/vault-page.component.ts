@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {GitCollectorService} from "../../features/markdown-reader/git-collector.service";
 
 @Component({
   selector: 'fec-vault-page',
@@ -9,7 +8,7 @@ import {GitCollectorService} from "../../features/markdown-reader/git-collector.
 })
 export class VaultPageComponent {
 
-  constructor(protected route: ActivatedRoute, protected repository: GitCollectorService) {
+  constructor(protected route: ActivatedRoute) {
 
   }
 

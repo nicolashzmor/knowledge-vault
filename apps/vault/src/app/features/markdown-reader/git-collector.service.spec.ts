@@ -3,14 +3,14 @@ import {TestBed} from '@angular/core/testing';
 import {GitCollectorService} from './git-collector.service';
 import {MockProvider} from "ng-mocks";
 import {ObsidianCollectorValues} from "./declarations/values";
-import REPO_CONNECTION = ObsidianCollectorValues.REPO_CONNECTION;
+import MODULE_CONFIG = ObsidianCollectorValues.MODULE_CONFIG;
 
 describe('GitCollectorService', () => {
   let service: GitCollectorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [MockProvider(REPO_CONNECTION, { repository: '' })]
+      providers: [MockProvider(MODULE_CONFIG, { connection: { repository: '' }, roots: [] })]
     });
     service = TestBed.inject(GitCollectorService);
   });
