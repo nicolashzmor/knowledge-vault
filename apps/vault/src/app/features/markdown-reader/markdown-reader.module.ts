@@ -1,10 +1,10 @@
 import {ModuleWithProviders, NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MarkdownReaderDeclarations} from "./declarations/declarations";
-import {ObsidianCollectorValues} from "./declarations/values";
+import {MarkdownReaderValues} from "./declarations/values";
 import {MarkdownReaderService} from "./markdown-reader.service";
 import ObsidianCollectorModuleConfig = MarkdownReaderDeclarations.MarkdownReaderModuleConfig;
-import MODULE_CONFIG = ObsidianCollectorValues.MODULE_CONFIG;
+import MODULE_CONFIG = MarkdownReaderValues.MODULE_CONFIG;
 
 
 @NgModule({
@@ -15,7 +15,7 @@ import MODULE_CONFIG = ObsidianCollectorValues.MODULE_CONFIG;
 
 })
 export class MarkdownReaderModule {
-  constructor(protected obsidian: MarkdownReaderService) {
+  constructor(protected mdReader: MarkdownReaderService) {
 
   }
 

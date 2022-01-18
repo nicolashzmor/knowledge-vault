@@ -1,5 +1,5 @@
 import {Inject, Injectable} from '@angular/core';
-import {ObsidianCollectorValues} from "./declarations/values";
+import {MarkdownReaderValues} from "./declarations/values";
 import {MarkdownReaderDeclarations} from "./declarations/declarations";
 import * as BrowserFS from 'browserfs';
 import * as git from 'isomorphic-git'
@@ -7,7 +7,7 @@ import {TREE, WalkerEntry} from 'isomorphic-git'
 import * as http from 'isomorphic-git/http/web'
 import fs from "browserfs/dist/node/core/node_fs";
 import {from, Observable, shareReplay, Subject, switchMap} from "rxjs";
-import MODULE_CONFIG = ObsidianCollectorValues.MODULE_CONFIG;
+import MODULE_CONFIG = MarkdownReaderValues.MODULE_CONFIG;
 import GitTreeEntry = MarkdownReaderDeclarations.GitTreeEntry;
 import GitTreeNode = MarkdownReaderDeclarations.GitTreeNode;
 
