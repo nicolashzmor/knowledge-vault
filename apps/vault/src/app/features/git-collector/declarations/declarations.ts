@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace MarkdownReaderDeclarations {
-  export type MarkdownReaderModuleConfig = {
+export namespace GitCollectorDeclarations {
+  export type GitCollectorConfig = {
     connection: GitCredentials
     roots: string[]
   };
@@ -9,10 +9,9 @@ export namespace MarkdownReaderDeclarations {
     username?: string
     password?: string
   }
-
   export interface GitTreeNode {
     entry: GitTreeEntry
-    children: GitTreeEntry[]
+    children: GitTreeNode[]
   }
   export interface GitTreeEntry {
     filepath: string,

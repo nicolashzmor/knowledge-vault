@@ -2,8 +2,8 @@ import {TestBed} from '@angular/core/testing';
 
 import {GitCollectorService} from './git-collector.service';
 import {MockProvider} from "ng-mocks";
-import {MarkdownReaderValues} from "./declarations/values";
-import MODULE_CONFIG = MarkdownReaderValues.MODULE_CONFIG;
+import {GitCollectorValues} from "./declarations/values";
+import MODULE_CONFIG = GitCollectorValues.MODULE_CONFIG;
 
 describe('GitCollectorService', () => {
   let service: GitCollectorService;

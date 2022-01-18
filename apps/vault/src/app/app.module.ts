@@ -5,7 +5,7 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from "./app.routing.module";
 import {DynamicRouterModule} from "./features/dynamic-router/dynamic-router.module";
 import {VaultPageComponent} from "./pages/vault-page/vault-page.component";
-import {MarkdownReaderModule} from "./features/markdown-reader/markdown-reader.module";
+import {GitCollectorModule} from "./features/git-collector/git-collector.module";
 
 
 @NgModule({
@@ -16,11 +16,11 @@ import {MarkdownReaderModule} from "./features/markdown-reader/markdown-reader.m
     DynamicRouterModule.forRoot({
       routes: [{path: '', name: 'INITIAL_PAGE', component: VaultPageComponent}]
     }),
-    MarkdownReaderModule.forRoot({
+    GitCollectorModule.forRoot({
       connection: {
         repository: 'https://github.com/nicolashzmor/knowledge-garden.git'
       },
-      roots: ['⚙️ Meta', '🌳 The Forest', '📚 Sources']
+      roots: ['🌳 The Forest', '📚 Sources']
     })
   ],
   providers: [],

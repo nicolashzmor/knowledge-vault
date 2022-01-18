@@ -52,4 +52,4 @@ import 'zone.js'; // Included with Angular CLI.
  */
 
 // eslint-disable-next-line
-(window as any).Buffer = (window as any).Buffer || require('buffer').Buffer;
+(window as any).Buffer = (window as any).Buffer;

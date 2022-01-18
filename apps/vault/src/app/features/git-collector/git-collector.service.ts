@@ -1,15 +1,15 @@
 import {Inject, Injectable} from '@angular/core';
-import {MarkdownReaderValues} from "./declarations/values";
-import {MarkdownReaderDeclarations} from "./declarations/declarations";
-import * as BrowserFS from 'browserfs';
-import * as git from 'isomorphic-git'
+import {GitCollectorValues} from "./declarations/values";
+import {GitCollectorDeclarations} from "./declarations/declarations";
 import {TREE, WalkerEntry} from 'isomorphic-git'
+import * as git from 'isomorphic-git'
 import * as http from 'isomorphic-git/http/web'
+import * as BrowserFS from 'browserfs';
 import fs from "browserfs/dist/node/core/node_fs";
 import {from, Observable, shareReplay, Subject, switchMap} from "rxjs";
-import MODULE_CONFIG = MarkdownReaderValues.MODULE_CONFIG;
-import GitTreeEntry = MarkdownReaderDeclarations.GitTreeEntry;
-import GitTreeNode = MarkdownReaderDeclarations.GitTreeNode;
+import MODULE_CONFIG = GitCollectorValues.MODULE_CONFIG;
+import GitTreeEntry = GitCollectorDeclarations.GitTreeEntry;
+import GitTreeNode = GitCollectorDeclarations.GitTreeNode;
 
 @Injectable({
   providedIn: 'root'
@@ -29,8 +29,34 @@ export class GitCollectorService {
   public entriesTree$: Observable<GitTreeNode[]> = this.clone$.pipe(switchMap(() => from(this.buildEntriesTree())), shareReplay())
   public entriesFlatMap$: Observable<GitTreeEntry[]> = this.clone$.pipe(switchMap(() => from(this.buildEntriesFlatMap())), shareReplay())
 
-  constructor(@Inject(MODULE_CONFIG) protected moduleConfig: MarkdownReaderDeclarations.MarkdownReaderModuleConfig) {
-    (new Promise((resolve, reject) => {
+  constructor(@Inject(MODULE_CONFIG) protected moduleConfig: GitCollectorDeclarations.GitCollectorConfig) {
+    this.initializeFileSystem().then(() => console.log('Git Collector File System Initialized'))
+  }
+
+  public readyEntry(entry: GitTreeEntry): Promise<string[] | string | undefined>{
+    // TODO: Abstract this into Entry Mode Processor
+    if(entry.mode === this.modesMap['40000']){
+      return new Promise((resolve) => {
+        this.fs.readdir(this.filepath(entry), (err, result) => {
+          if(err) throw err;
+          resolve(result)
+        })
+      })
+    } else {
+      return new Promise((resolve) => {
+        this.fs.readFile(this.filepath(entry), (err, result) => {
+          if(err) throw err;
+          resolve(result?.toString())
+        })
+      })
+    }
+  }
+
+  protected filepath(entry: GitTreeEntry){
+    return `${this.rootDir}/${entry.filepath}`;
+  }
+  protected initializeFileSystem(){
+    return new Promise((resolve, reject) => {
       BrowserFS.getFileSystem({
         fs: "IndexedDB",
         options: {}
@@ -49,15 +75,12 @@ export class GitCollectorService {
         }
         if (fs) resolve(BrowserFS.initialize(fs));
       })
-    }))
-      .then(async () => {
-          this.fs = BrowserFS.BFSRequire("fs")
-          this.rootDir = '/testing'
-          this.fileSystemReady$.next()
-        }
-      )
+    }).then(async () => {
+      this.fs = BrowserFS.BFSRequire("fs")
+      this.rootDir = '/testing'
+      this.fileSystemReady$.next()
+    })
   }
-
   protected cloneRepository() {
     return git.clone({
       fs: this.fs,
