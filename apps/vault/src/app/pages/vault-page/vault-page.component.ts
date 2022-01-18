@@ -1,19 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {DynamicRouterService} from "../../features/dynamic-router/dynamic-router.service";
+import {GitCollectorService} from "../../features/markdown-reader/git-collector.service";
 
 @Component({
   selector: 'fec-vault-page',
   templateUrl: './vault-page.component.html',
   styleUrls: ['./vault-page.component.scss']
 })
-export class VaultPageComponent implements OnInit {
+export class VaultPageComponent {
 
-  constructor(protected route: ActivatedRoute, protected dynamicRouter: DynamicRouterService) {
-  }
+  constructor(protected route: ActivatedRoute, protected repository: GitCollectorService) {
 
-  ngOnInit(): void {
-    console.log(this.route)
   }
 
 }
