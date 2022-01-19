@@ -17,7 +17,8 @@ export class DynamicRouterOutletComponent implements AfterViewInit {
     const component_key = this.route.snapshot.paramMap.get('component')
     if (component_key) {
       const type: Type<unknown> | undefined = DynamicRouterService.GetComponent(component_key)
-      if (type) this.outlet.createComponent(type)
+      if (type) this.outlet.createComponent(type).changeDetectorRef.detectChanges()
+
     }
   }
 

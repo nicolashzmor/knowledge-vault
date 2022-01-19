@@ -1,6 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { DocumentViewComponent } from './document-view.component';
+import {DocumentViewComponent} from './document-view.component';
+import {RouterTestingModule} from "@angular/router/testing";
+import {MockProvider} from "ng-mocks";
+import {Store} from "@ngxs/store";
+import {MarkdownReaderService} from "../../features/markdown-reader/markdown-reader.service";
 
 describe('DocumentViewComponent', () => {
   let component: DocumentViewComponent;
@@ -8,9 +12,14 @@ describe('DocumentViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DocumentViewComponent ]
+      imports: [RouterTestingModule],
+      providers: [
+        MockProvider(Store, {}),
+        MockProvider(MarkdownReaderService)
+      ],
+      declarations: [DocumentViewComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

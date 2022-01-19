@@ -3,7 +3,7 @@ import {Injectable} from "@angular/core";
 import {GitCollectorService} from "../../features/git-collector/git-collector.service";
 import {DynamicRouterService} from "../../features/dynamic-router/dynamic-router.service";
 import {MarkdownReaderService} from "../../features/markdown-reader/markdown-reader.service";
-import {catchError, combineLatest, map, switchMap, tap} from "rxjs";
+import {catchError, combineLatest, map, skip, switchMap, tap} from "rxjs";
 import {CoreActions} from "./core.actions";
 import {CoreModels} from "./core.models";
 import {CoreEvents} from "./core.events";
@@ -11,9 +11,12 @@ import {GitCollectorDeclarations} from "../../features/git-collector/declaration
 import {DirectoryViewComponent} from "../../pages/directory-view/directory-view.component";
 import {DocumentViewComponent} from "../../pages/document-view/document-view.component";
 import {DynamicRouterDeclarations} from "../../features/dynamic-router/declarations/declarations";
-import {Navigate} from "@ngxs/router-plugin";
+import {RouterNavigation} from "@ngxs/router-plugin";
+import {Repository} from "../../features/git-collector/declarations/repository.class";
+import {EntryActions} from "../entry/entry.actions";
 import GitTreeEntry = GitCollectorDeclarations.GitTreeEntry;
 import DynamicRouteDto = DynamicRouterDeclarations.DynamicRouteDto;
+import LoadDocument = EntryActions.LoadEntry;
 
 @State<CoreModels.State>({
   name: 'core',
@@ -27,6 +30,8 @@ import DynamicRouteDto = DynamicRouterDeclarations.DynamicRouteDto;
 })
 @Injectable()
 export class CoreState {
+  protected repository!: Repository
+
   constructor(
     protected gitCollector: GitCollectorService,
     protected dynamicRouter: DynamicRouterService,
@@ -51,8 +56,10 @@ export class CoreState {
     {patchState, dispatch}: StateContext<CoreModels.State>,
     {repository}: CoreEvents.RepositoryConnectionSucceeded
   ) {
-    return combineLatest([repository.entriesTree$, repository.entriesFlatMap$])
+    this.repository = repository; // TODO: I don't like this. Make it better.
+    return combineLatest([repository.entriesTree$, repository.entries$])
       .pipe(
+        skip(1),
         map(([tree, entries]) => ({tree, entries})),
         tap(({tree, entries}) => patchState({
           loading: false,
@@ -74,9 +81,15 @@ export class CoreState {
     this.dynamicRouter.refresh(routes)
   }
 
-  @Action(Navigate)
-  onNavigate({patchState}: StateContext<CoreModels.State>, action: Navigate) {
-    console.log(action.path)
+  @Action(RouterNavigation)
+  onNavigate({getState, dispatch}: StateContext<CoreModels.State>, action: RouterNavigation) {
+    const activeRoutes = getState().routesToEntryDictionary
+    const activeRoutesKeys = Object.keys(activeRoutes)
+    const currentRouteAsKey = action.routerState.url.replace(/^\//, '')
+    if (activeRoutesKeys.includes(currentRouteAsKey)) {
+      const entry = activeRoutes[currentRouteAsKey]
+      dispatch(new LoadDocument(this.repository, entry))
+    }
   }
 
   protected entryToDynamicRoute(entry: GitTreeEntry): DynamicRouteDto {

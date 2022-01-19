@@ -8,7 +8,9 @@ import {NgxsModule} from "@ngxs/store";
 import {CoreState} from "./state/core/core.state";
 import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
 import {environment} from "../environments/environment";
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {NgxsRouterPluginModule} from "@ngxs/router-plugin";
+import {EntryState} from "./state/entry/entry.state";
 
 
 @NgModule({
@@ -17,7 +19,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     AppRoutingModule,
     DynamicRouterModule.forRoot(),
-    NgxsModule.forRoot([CoreState],{ developmentMode: !environment.production }),
+    NgxsModule.forRoot([CoreState, EntryState], {developmentMode: !environment.production}),
+    NgxsRouterPluginModule.forRoot(),
     NgxsReduxDevtoolsPluginModule.forRoot(),
     BrowserAnimationsModule
   ],

@@ -1,7 +1,6 @@
 import fs from "browserfs/dist/node/core/node_fs";
-import * as uuid from 'uuid';
-import {from, Observable} from "rxjs";
-import {map, shareReplay, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, from, Observable,} from "rxjs";
+import {map, shareReplay, switchMap, tap} from 'rxjs/operators';
 import {GitCollectorDeclarations} from "./declarations";
 import * as git from "isomorphic-git";
 import {TREE, WalkerEntry} from "isomorphic-git";
@@ -14,38 +13,51 @@ import GitConnectionOptions = GitCollectorDeclarations.GitConnectionOptions;
 import ENTRY_MODE = GitCollectorValues.ENTRY_MODE;
 
 export class Repository {
-  public entriesTree$: Observable<GitTreeNode[]>
-  public entriesFlatMap$: Observable<GitTreeEntry[]>
+
+  public entriesTree$: BehaviorSubject<GitTreeNode[]> = new BehaviorSubject<GitCollectorDeclarations.GitTreeNode[]>([])
+  public entries$: BehaviorSubject<GitTreeEntry[]> = new BehaviorSubject<GitCollectorDeclarations.GitTreeEntry[]>([])
   protected rootDir: string;
-  protected clone$: Observable<void>
+  protected cloned$: Observable<void>
 
   constructor(protected filesystem: typeof fs, protected connection: GitConnectionConfig, protected options: GitConnectionOptions) {
-    this.rootDir = `/${options.identifier || uuid.v4()}`;
-    this.clone$ = from(this.cloneRepository());
-    this.entriesTree$ = this.clone$.pipe(switchMap(() => this.buildEntriesTree()), shareReplay())
-    this.entriesFlatMap$ = this.clone$.pipe(switchMap(() => this.buildEntriesFlatMap()), shareReplay())
+    this.rootDir = `/${options.identifier || connection.repository.split('/').slice(-1).pop()?.replace(/(.git)$/, '')}`;
+    this.cleanFileSystem();
+    this.cloned$ = from(this.cloneRepository());
+
+    this.cloned$.pipe(
+      switchMap(() => this.buildEntriesTree()),
+      tap((tree) => this.entriesTree$.next(tree)),
+      shareReplay()
+    ).subscribe()
+
+    this.cloned$.pipe(
+      switchMap(() => this.buildEntriesFlatMap()),
+      tap(console.log),
+      tap((entries) => this.entries$.next(entries)),
+      shareReplay()
+    ).subscribe()
   }
 
   public connect(): Observable<Repository> {
-    return this.clone$.pipe(map(() => this));
+    return this.cloned$.pipe(map(() => this));
   }
 
   public readEntry(entry: GitTreeEntry): Promise<string[] | string | undefined> {
     // TODO: Abstract this into Entry Mode Processor Dictionary
-    if (entry.mode === ENTRY_MODE['40000']) {
-      return new Promise((resolve) => {
-        this.filesystem.readdir(this.filepath(entry), (err, result) => {
-          if (err) throw err;
-          resolve(result)
-        })
-      })
-    } else {
-      return new Promise((resolve) => {
-        this.filesystem.readFile(this.filepath(entry), (err, result) => {
-          if (err) throw err;
-          resolve(result?.toString())
-        })
-      })
+    return new Promise<string[] | string | undefined>((resolve, reject) => {
+      if (entry.mode === ENTRY_MODE['40000']) {
+        return this.filesystem.readdir(this.filepath(entry), (error, entryDir) => error && reject(error) || resolve(entryDir))
+      }
+      if([ENTRY_MODE['100644'], ENTRY_MODE['100755']].includes(entry.mode)){
+        return this.filesystem.readFile(this.filepath(entry), (error, content) => error && reject(error) || resolve(content?.toString()))
+      }
+      reject('Unknown filetype')
+    })
+  }
+
+  protected cleanFileSystem() {
+    if (this.filesystem.existsSync(this.rootDir)) {
+      this.filesystem.rmdirSync(this.rootDir)
     }
   }
 

@@ -8,7 +8,8 @@ import {HomeComponent} from "./home/home.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  {matcher: DynamicRoutesMatcher, component: DynamicRouterOutletComponent}
+  {matcher: DynamicRoutesMatcher, component: DynamicRouterOutletComponent},
+  { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
 
 @NgModule({
