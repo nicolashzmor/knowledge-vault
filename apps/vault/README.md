@@ -4,10 +4,11 @@
 
 ### Main Flow to prove.
 
-* Route Activates
-* Get MD file from configured repository
-* Convert to NodeMap (markedJS)
-* Render with the corresponding custom md-block.
+* :white_check_mark: Route Activates
+* :white_check_mark: Get MD file from configured repository
+* :white_check_mark: Convert to NodeMap (markedJS)
+* :white_check_mark: Render with the corresponding custom md-block.
+* Render with custom web components
 
 #### Pre-requisites for the main flow
 
