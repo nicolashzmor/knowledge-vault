@@ -4,8 +4,10 @@ import {DynamicRoutesMatcher} from "../features/dynamic-router/dynamic-router.ma
 import {
   DynamicRouterOutletComponent
 } from "../features/dynamic-router/dynamic-router-outlet/dynamic-router-outlet.component";
+import {HomeComponent} from "./home/home.component";
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   {matcher: DynamicRoutesMatcher, component: DynamicRouterOutletComponent}
 ];
 

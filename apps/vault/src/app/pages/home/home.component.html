@@ -1,0 +1,5 @@
+<ul>
+  <li *ngFor="let entry of entries$ | async">
+    <a [routerLink]="entry.route">{{ entry.filename }}</a>
+  </li>
+</ul>

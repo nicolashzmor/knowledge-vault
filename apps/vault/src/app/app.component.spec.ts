@@ -1,9 +1,13 @@
 import {TestBed} from '@angular/core/testing';
 import {AppComponent} from './app.component';
+import {MockProvider} from "ng-mocks";
+import {Store} from "@ngxs/store";
+import {of} from "rxjs";
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [MockProvider(Store, {dispatch: () => of(false)})],
       declarations: [AppComponent],
     }).compileComponents();
   });

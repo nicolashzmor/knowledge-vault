@@ -19,11 +19,11 @@ import {DynamicRouterService} from "./dynamic-router.service";
 export class DynamicRouterModule {
   constructor(protected router: DynamicRouterService) {
   }
-  public static forRoot(config: { routes: DynamicRouteDto[] }): ModuleWithProviders<DynamicRouterModule> {
+  public static forRoot(config?: { routes?: DynamicRouteDto[] }): ModuleWithProviders<DynamicRouterModule> {
     return {
       ngModule: DynamicRouterModule,
       providers: [
-        { provide: INITIAL_ROUTES, useValue: config.routes }
+        { provide: INITIAL_ROUTES, useValue: config?.routes || [] }
       ]
     }
   }

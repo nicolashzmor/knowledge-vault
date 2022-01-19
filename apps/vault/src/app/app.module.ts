@@ -4,8 +4,10 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from "./app.routing.module";
 import {DynamicRouterModule} from "./features/dynamic-router/dynamic-router.module";
-import {VaultPageComponent} from "./pages/vault-page/vault-page.component";
-import {GitCollectorModule} from "./features/git-collector/git-collector.module";
+import {NgxsModule} from "@ngxs/store";
+import {CoreState} from "./state/core/core.state";
+import {NgxsReduxDevtoolsPluginModule} from "@ngxs/devtools-plugin";
+import {environment} from "../environments/environment";
 
 
 @NgModule({
@@ -13,15 +15,9 @@ import {GitCollectorModule} from "./features/git-collector/git-collector.module"
   imports: [
     BrowserModule,
     AppRoutingModule,
-    DynamicRouterModule.forRoot({
-      routes: [{path: '', name: 'INITIAL_PAGE', component: VaultPageComponent}]
-    }),
-    GitCollectorModule.forRoot({
-      connection: {
-        repository: 'https://github.com/nicolashzmor/knowledge-garden.git'
-      },
-      roots: ['🌳 The Forest', '📚 Sources']
-    })
+    DynamicRouterModule.forRoot(),
+    NgxsModule.forRoot([CoreState],{ developmentMode: !environment.production }),
+    NgxsReduxDevtoolsPluginModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent],

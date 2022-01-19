@@ -35,6 +35,11 @@ export class DynamicRouterService {
     this.update([...DynamicRouterService.DynamicRoutes, ...routes])
   }
 
+  refresh(routes: DynamicRouteDto | DynamicRouteDto[]){
+    routes = Array.isArray(routes) ? routes : [routes]
+    this.update(routes)
+  }
+
   protected update(routes: DynamicRouteDto[]) {
     DynamicRouterService.DynamicRoutes = routes;
     DynamicRouterService.DynamicRouter = new DynamicRouter(DynamicRouterService.DynamicRoutes)
