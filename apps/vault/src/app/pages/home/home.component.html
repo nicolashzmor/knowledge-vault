@@ -1,5 +1,16 @@
-<ul>
-  <li *ngFor="let entry of entries$ | async">
-    <a [routerLink]="entry.route">{{ entry.filename }}</a>
-  </li>
-</ul>
+<cdk-tree [dataSource]="dataSource" [treeControl]="control">
+  <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="tree-node tree-node--document">
+    <a [routerLink]="node.entry.route">{{node.entry.filename}}</a>
+  </cdk-nested-tree-node>
+  <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: isDirectory" class="tree-node tree-node--directory">
+<!--    <button mat-icon-button [attr.aria-label]="'Toggle ' + node.entry.filename" cdkTreeNodeToggle>-->
+<!--      <mat-icon class="mat-icon-rtl-mirror">-->
+<!--        {{control.isExpanded(node) ? 'expand_more' : 'chevron_right'}}-->
+<!--      </mat-icon>-->
+<!--    </button>-->
+    <a [routerLink]="node.entry.route">{{node.entry.filename}}</a>
+    <section class="tree-node__children">
+      <ng-container cdkTreeNodeOutlet></ng-container>
+    </section>
+  </cdk-nested-tree-node>
+</cdk-tree>

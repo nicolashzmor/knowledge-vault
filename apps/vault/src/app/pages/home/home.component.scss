@@ -1,0 +1,11 @@
+:host {
+  .tree-node {
+    display: block;
+    &__children {
+      padding-left: 2em;
+    }
+    &--directory {
+
+    }
+  }
+}

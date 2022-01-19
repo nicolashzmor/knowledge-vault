@@ -3,7 +3,9 @@ import {GitCollectorDeclarations} from "../../features/git-collector/declaration
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
 import {CoreSelectors} from "../../state/core/core.selectors";
-import GitTreeEntry = GitCollectorDeclarations.GitTreeEntry;
+import {NestedTreeControl} from "@angular/cdk/tree";
+import {ArrayDataSource, DataSource} from "@angular/cdk/collections";
+import GitTreeNode = GitCollectorDeclarations.GitTreeNode;
 
 @Component({
   selector: 'fec-home',
@@ -11,9 +13,15 @@ import GitTreeEntry = GitCollectorDeclarations.GitTreeEntry;
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  public entries$: Observable<GitTreeEntry[]> = this.store.select(CoreSelectors.LoadedEntries())
+  public entries$: Observable<GitTreeNode[]> = this.store.select(CoreSelectors.LoadedEntries())
+  public control = new NestedTreeControl<GitTreeNode>(entry => entry.children)
+  public dataSource: DataSource<GitTreeNode> = new ArrayDataSource<GitTreeNode>(this.entries$)
 
   constructor(protected store: Store) {
+  }
+
+  isDirectory(index: number, node: GitTreeNode) {
+    return node.entry.mode === 'directory'
   }
 
 
