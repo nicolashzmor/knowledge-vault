@@ -18,7 +18,6 @@ export class DynamicRouterOutletComponent implements AfterViewInit {
     if (component_key) {
       const type: Type<unknown> | undefined = DynamicRouterService.GetComponent(component_key)
       if (type) this.outlet.createComponent(type).changeDetectorRef.detectChanges()
-
     }
   }
 

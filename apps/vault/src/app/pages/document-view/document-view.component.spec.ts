@@ -5,6 +5,8 @@ import {RouterTestingModule} from "@angular/router/testing";
 import {MockProvider} from "ng-mocks";
 import {Store} from "@ngxs/store";
 import {MarkdownReaderService} from "../../features/markdown-reader/markdown-reader.service";
+import {DomSanitizer} from "@angular/platform-browser";
+import {of} from "rxjs";
 
 describe('DocumentViewComponent', () => {
   let component: DocumentViewComponent;
@@ -14,8 +16,9 @@ describe('DocumentViewComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
-        MockProvider(Store, {}),
-        MockProvider(MarkdownReaderService)
+        MockProvider(Store, {select: () => of(true)}),
+        MockProvider(MarkdownReaderService),
+        MockProvider(DomSanitizer)
       ],
       declarations: [DocumentViewComponent]
     })
